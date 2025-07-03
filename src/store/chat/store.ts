@@ -1,5 +1,5 @@
 // sort-imports-ignore
-import { subscribeWithSelector } from 'zustand/middleware';
+import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { shallow } from 'zustand/shallow';
 import { createWithEqualityFn } from 'zustand/traditional';
 import { StateCreator } from 'zustand/vanilla';
@@ -54,7 +54,15 @@ const createStore: StateCreator<ChatStore, [['zustand/devtools', never]]> = (...
 const devtools = createDevtools('chat');
 
 export const useChatStore = createWithEqualityFn<ChatStore>()(
-  subscribeWithSelector(devtools(createStore)),
+  subscribeWithSelector(
+    persist(devtools(createStore), {
+      name: 'LobeChat_Chat',
+      partialize: (s) => ({
+        inputMessages: s.inputMessages,
+      }),
+      version: 0,
+    }),
+  ),
   shallow,
 );
 

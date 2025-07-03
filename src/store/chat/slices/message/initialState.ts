@@ -7,6 +7,7 @@ export interface ChatMessageState {
    */
   activeId: string;
 
+  inputMessages: Record<string, string>;
   isCreatingMessage: boolean;
   /**
    * is the message is editing
@@ -25,6 +26,7 @@ export interface ChatMessageState {
 
 export const initialMessageState: ChatMessageState = {
   activeId: 'inbox',
+  inputMessages: {},
   isCreatingMessage: false,
   messageEditingIds: [],
   messageLoadingIds: [],
