@@ -1,11 +1,10 @@
 // sort-imports-ignore
-import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { shallow } from 'zustand/shallow';
 import { createWithEqualityFn } from 'zustand/traditional';
 import { StateCreator } from 'zustand/vanilla';
 
 import { createDevtools } from '../middleware/createDevtools';
-import { ChatStoreState, initialState } from './initialState';
+import { type ChatStoreState, initialState } from './initialState';
 import { ChatBuiltinToolAction, chatToolSlice } from './slices/builtinTool/actions';
 import { ChatPortalAction, chatPortalSlice } from './slices/portal/action';
 import { ChatTranslateAction, chatTranslate } from './slices/translate/action';
@@ -16,6 +15,7 @@ import { ChatTopicAction, chatTopic } from './slices/topic/action';
 import { ChatAIChatAction, chatAiChat } from './slices/aiChat/actions';
 import { ChatTTSAction, chatTTS } from './slices/tts/action';
 import { ChatThreadAction, chatThreadMessage } from './slices/thread/action';
+import { persist, subscribeWithSelector, createJSONStorage } from 'zustand/middleware';
 
 export interface ChatStoreAction
   extends ChatMessageAction,
@@ -51,15 +51,23 @@ const createStore: StateCreator<ChatStore, [['zustand/devtools', never]]> = (...
 });
 
 //  ===============  实装 useStore ============ //
-const devtools = createDevtools('chat');
+const devtoolsEnhancer = createDevtools('chat');
 
 export const useChatStore = createWithEqualityFn<ChatStore>()(
   subscribeWithSelector(
-    persist(devtools(createStore), {
+    persist(devtoolsEnhancer(createStore), {
+      merge: (persistedState, currentState) => {
+        const state = persistedState as ChatStoreState;
+        currentState.inputMessages = { ...currentState.inputMessages, ...state.inputMessages };
+        return currentState;
+      },
+
       name: 'LobeChat_Chat',
       partialize: (s) => ({
         inputMessages: s.inputMessages,
       }),
+
+      storage: createJSONStorage(() => localStorage),
       version: 0,
     }),
   ),

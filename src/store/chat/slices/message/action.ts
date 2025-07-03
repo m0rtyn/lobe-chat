@@ -228,9 +228,16 @@ export const chatMessage: StateCreator<
   },
 
   updateInputMessage: (message) => {
-    if (isEqual(message, get().inputMessage)) return;
+    const { activeId, inputMessages } = get();
+    if (!activeId || isEqual(message, inputMessages[activeId])) return;
 
-    set({ inputMessage: message }, false, n('updateInputMessage', message));
+    const nextInputMessages = { ...inputMessages, [activeId]: message };
+
+    set(
+      { inputMessages: nextInputMessages },
+      false,
+      n('updateInputMessage', { activeId, message }),
+    );
   },
   modifyMessageContent: async (id, content) => {
     // tracing the diff of update
