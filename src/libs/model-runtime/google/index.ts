@@ -5,12 +5,13 @@ import {
   Tool as GoogleFunctionCallTool,
   GoogleGenAI,
   Part,
-  Type as SchemaType,
+  Schema,
   ThinkingConfig,
 } from '@google/genai';
 
 import { imageUrlToBase64 } from '@/utils/imageToBase64';
 import { safeParseJSON } from '@/utils/safeParseJSON';
+import { sanitizeParametersForGemini } from '@/utils/sanitize';
 
 import { LobeRuntimeAI } from '../BaseAI';
 import { AgentRuntimeErrorType, ILobeAgentRuntimeErrorType } from '../error';
@@ -195,7 +196,7 @@ export class LobeGoogleAI implements LobeRuntimeAI {
           modelsDisableInstuction.has(model) || model.toLowerCase().includes('learnlm')
             ? undefined
             : thinkingConfig,
-        tools: this.buildGoogleTools(payload.tools, payload),
+        tools: this.buildGoogleTools(payload.tools),
         topP: payload.top_p,
       };
 
@@ -504,53 +505,49 @@ export class LobeGoogleAI implements LobeRuntimeAI {
     return defaultError;
   }
 
-  private buildGoogleTools(
-    tools: ChatCompletionTool[] | undefined,
-    payload?: ChatStreamPayload,
-  ): GoogleFunctionCallTool[] | undefined {
-    // 目前 Tools (例如 googleSearch) 无法与其他 FunctionCall 同时使用
-    if (payload?.messages?.some((m) => m.tool_calls?.length)) {
-      return this.buildFunctionDeclarations(tools);
-    }
-    if (payload?.enabledSearch) {
-      return [{ googleSearch: {} }];
+  private buildGoogleTools(tools?: ChatCompletionTool[]): GoogleFunctionCallTool[] | undefined {
+    if (!tools?.length) {
+      return undefined;
     }
 
-    return this.buildFunctionDeclarations(tools);
-  }
+    const functionDeclarations: FunctionDeclaration[] = tools.map((tool) => {
+      const { function: func } = tool;
+      const description = func.description;
+      const parameters =
+        func.parameters && typeof func.parameters === 'object' && !Array.isArray(func.parameters)
+          ? (func.parameters as Schema)
+          : {};
 
-  private buildFunctionDeclarations(
-    tools: ChatCompletionTool[] | undefined,
-  ): GoogleFunctionCallTool[] | undefined {
-    if (!tools || tools.length === 0) return;
+      // 兼容 visionOS 无法正确处理空 properties 的问题
+      // at 2024.02.20
+      if (
+        parameters &&
+        'properties' in parameters &&
+        Object.keys(parameters.properties as Record<string, any>).length === 0
+      ) {
+        delete parameters.properties;
+      }
+
+      // Sanitize parameters for Gemini
+      if (parameters) {
+        sanitizeParametersForGemini(parameters);
+      }
+
+      return {
+        description,
+        name: func.name,
+        parameters,
+      };
+    });
+
+    if (functionDeclarations.length === 0) return undefined;
 
     return [
       {
-        functionDeclarations: tools.map((tool) => this.convertToolToGoogleTool(tool)),
+        functionDeclarations,
       },
     ];
   }
-
-  private convertToolToGoogleTool = (tool: ChatCompletionTool): FunctionDeclaration => {
-    const functionDeclaration = tool.function;
-    const parameters = functionDeclaration.parameters;
-    // refs: https://github.com/lobehub/lobe-chat/pull/5002
-    const properties =
-      parameters?.properties && Object.keys(parameters.properties).length > 0
-        ? parameters.properties
-        : { dummy: { type: 'string' } }; // dummy property to avoid empty object
-
-    return {
-      description: functionDeclaration.description,
-      name: functionDeclaration.name,
-      parameters: {
-        description: parameters?.description,
-        properties: properties,
-        required: parameters?.required,
-        type: SchemaType.OBJECT,
-      },
-    };
-  };
 
   private extractErrorObjectFromError(message: string) {
     // 使用正则表达式匹配状态码部分 [数字 描述文本]
