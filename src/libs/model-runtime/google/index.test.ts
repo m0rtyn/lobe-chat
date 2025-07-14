@@ -677,7 +677,7 @@ describe('LobeGoogleAI', () => {
           temperature: 1,
         };
 
-        const googleTools = instance['buildGoogleTools'](tools, payload);
+        const googleTools = instance['buildGoogleTools'](tools);
 
         expect(googleTools).toHaveLength(1);
         expect((googleTools![0] as Tool).functionDeclarations![0]).toEqual({
@@ -707,7 +707,7 @@ describe('LobeGoogleAI', () => {
           enabledSearch: true,
         };
 
-        const googleTools = instance['buildGoogleTools'](undefined, payload);
+        const googleTools = instance['buildGoogleTools'](undefined);
 
         expect(googleTools).toHaveLength(1);
         expect(googleTools![0] as Tool).toEqual({ googleSearch: {} });
