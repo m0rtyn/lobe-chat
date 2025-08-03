@@ -10,10 +10,10 @@ import { DEFAULT_AGENT_CONFIG } from '@/const/settings';
 import { TracePayload, TraceTagMap } from '@/const/trace';
 import { isDeprecatedEdition, isDesktop, isServerMode } from '@/const/version';
 import {
-  AgentRuntime,
   AgentRuntimeError,
   ChatCompletionErrorPayload,
   ModelProvider,
+  ModelRuntime,
 } from '@/libs/model-runtime';
 import { parseDataUri } from '@/libs/model-runtime/utils/uriParser';
 import { filesPrompts } from '@/prompts/files';
@@ -40,6 +40,7 @@ import { ChatImageItem, ChatMessage, MessageToolCall } from '@/types/message';
 import type { ChatStreamPayload, OpenAIChatMessage } from '@/types/openai/chat';
 import { UserMessageContentPart } from '@/types/openai/chat';
 import { parsePlaceholderVariablesMessages } from '@/utils/client/parserPlaceholder';
+import { fetchWithInvokeStream } from '@/utils/electron/desktopRemoteRPCFetch';
 import { createErrorResponse } from '@/utils/errorResponse';
 import {
   FetchSSEOptions,
@@ -167,7 +168,7 @@ export function initializeWithClientStore(provider: string, payload?: any) {
    * Configuration override order:
    * payload -> providerAuthPayload -> commonOptions
    */
-  return AgentRuntime.initializeWithProvider(provider, {
+  return ModelRuntime.initializeWithProvider(provider, {
     ...commonOptions,
     ...providerAuthPayload,
     ...payload,
@@ -262,6 +263,12 @@ class ChatService {
             type: 'disabled',
           };
         }
+      } else if (modelExtendParams!.includes('reasoningBudgetToken')) {
+        // For models that only have reasoningBudgetToken without enableReasoning
+        extendParams.thinking = {
+          budget_tokens: chatConfig.reasoningBudgetToken || 1024,
+          type: 'enabled',
+        };
       }
 
       if (
@@ -361,7 +368,10 @@ class ChatService {
 
     let fetcher: typeof fetch | undefined = undefined;
 
-    if (enableFetchOnClient) {
+    // Add desktop remote RPC fetch support
+    if (isDesktop) {
+      fetcher = fetchWithInvokeStream;
+    } else if (enableFetchOnClient) {
       /**
        * Notes:
        * 1. Browser agent runtime will skip auth check if a key and endpoint provided by

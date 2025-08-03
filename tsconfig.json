@@ -18,6 +18,7 @@
     "baseUrl": ".",
     "types": ["vitest/globals", "@serwist/next/typings"],
     "paths": {
+      "@/types/*": ["./packages/types/src/*"],
       "@/*": ["./src/*"],
       "~test-utils": ["./tests/utils.tsx"]
     },
@@ -27,7 +28,7 @@
       }
     ]
   },
-  "exclude": ["node_modules", "public/sw.js", "apps/desktop"],
+  "exclude": ["node_modules", "public/sw.js", "apps/desktop", ".next"],
   "include": [
     "**/*.d.ts",
     "**/*.ts",
