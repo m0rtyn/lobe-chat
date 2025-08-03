@@ -15,6 +15,8 @@ export const getServerDBConfig = () => {
 
       NEXT_PUBLIC_ENABLED_SERVER_SERVICE: process.env.NEXT_PUBLIC_SERVICE_MODE === 'server',
 
+      PG_SSL_CA: process.env.PG_SSL_CA,
+
       REMOVE_GLOBAL_FILE: process.env.DISABLE_REMOVE_GLOBAL_FILE !== '0',
     },
     server: {
@@ -23,6 +25,8 @@ export const getServerDBConfig = () => {
       DATABASE_URL: z.string().optional(),
 
       KEY_VAULTS_SECRET: z.string().optional(),
+
+      PG_SSL_CA: z.string().optional(),
 
       REMOVE_GLOBAL_FILE: z.boolean().optional(),
     },

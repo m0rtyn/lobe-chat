@@ -29,7 +29,13 @@ If you don't have it, please run \`openssl rand -base64 32\` to create one.
   }
 
   if (serverDBEnv.DATABASE_DRIVER === 'node') {
-    const client = new NodePool({ connectionString, ssl: { rejectUnauthorized: false } });
+    const client = new NodePool({
+      connectionString,
+      ssl: {
+        ca: serverDBEnv.PG_SSL_CA,
+        rejectUnauthorized: true,
+      },
+    });
     return nodeDrizzle(client, { schema });
   }
 

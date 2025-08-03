@@ -21,7 +21,13 @@ export const getTestDBInstance = async () => {
   }
 
   if (serverDBEnv.DATABASE_DRIVER === 'node') {
-    const client = new NodePool({ connectionString, ssl: { rejectUnauthorized: false } });
+    const client = new NodePool({
+      connectionString,
+      ssl: {
+        ca: serverDBEnv.PG_SSL_CA,
+        rejectUnauthorized: true,
+      },
+    });
 
     const db = nodeDrizzle(client, { schema });
 
