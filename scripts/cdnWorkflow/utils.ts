@@ -68,20 +68,35 @@ export const fetchImageAsFile = async (url: string, width: number) => {
 
     // Step 2: Create a blob from the response data
     const blob = await response.blob();
-    let buffer: ArrayBuffer | Buffer = await blob.arrayBuffer();
+    const initialBuffer = await blob.arrayBuffer();
     let type = getExtension(blob.type);
+
+    let finalBuffer: ArrayBuffer;
+
     if (type === '.gif') {
-      buffer = await opimizedGif(buffer as ArrayBuffer);
+      const optimized = await opimizedGif(initialBuffer);
       type = '.webp';
+      // Convert Node.js Buffer to a standard ArrayBuffer
+      const ab = new ArrayBuffer(optimized.length);
+      const view = new Uint8Array(ab);
+      optimized.copy(view);
+      finalBuffer = ab;
     } else if (type === '.png' || type === '.jpg') {
-      buffer = await opimized(buffer as ArrayBuffer, width);
+      const optimized = await opimized(initialBuffer, width);
       type = '.webp';
+      // Convert Node.js Buffer to a standard ArrayBuffer
+      const ab = new ArrayBuffer(optimized.length);
+      const view = new Uint8Array(ab);
+      optimized.copy(view);
+      finalBuffer = ab;
+    } else {
+      finalBuffer = initialBuffer;
     }
 
     const filename = Date.now().toString() + type;
 
     // Step 3: Create a file from the blob
-    const file: File = new File([buffer], filename, {
+    const file: File = new File([finalBuffer], filename, {
       lastModified: Date.now(),
       type: type === '.webp' ? 'image/webp' : blob.type,
     });
