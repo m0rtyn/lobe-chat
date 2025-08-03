@@ -71,10 +71,10 @@ export const fetchImageAsFile = async (url: string, width: number) => {
     let buffer: ArrayBuffer | Buffer = await blob.arrayBuffer();
     let type = getExtension(blob.type);
     if (type === '.gif') {
-      buffer = await opimizedGif(buffer);
+      buffer = await opimizedGif(buffer as ArrayBuffer);
       type = '.webp';
     } else if (type === '.png' || type === '.jpg') {
-      buffer = await opimized(buffer, width);
+      buffer = await opimized(buffer as ArrayBuffer, width);
       type = '.webp';
     }
 
