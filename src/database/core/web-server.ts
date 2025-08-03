@@ -33,7 +33,7 @@ If you don't have it, please run \`openssl rand -base64 32\` to create one.
       connectionString,
       ssl: {
         ca: serverDBEnv.PG_SSL_CA,
-        rejectUnauthorized: true,
+        rejectUnauthorized: false,
       },
     });
     return nodeDrizzle(client, { schema });
