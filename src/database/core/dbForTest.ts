@@ -25,7 +25,7 @@ export const getTestDBInstance = async () => {
       connectionString,
       ssl: {
         ca: serverDBEnv.PG_SSL_CA,
-        rejectUnauthorized: true,
+        rejectUnauthorized: false,
       },
     });
 

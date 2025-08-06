@@ -22,10 +22,10 @@ If you don't have it, please run \`openssl rand -base64 32\` to create one.
     );
   }
 
-  let connectionString = serverDBEnv.DATABASE_URL;
+  let connectionString = serverDBEnv.OLD_DB_URL;
 
   if (!connectionString) {
-    throw new Error(`You are try to use database, but "DATABASE_URL" is not set correctly`);
+    throw new Error(`You are try to use database, but "OLD_DB_URL" is not set correctly`);
   }
 
   if (serverDBEnv.DATABASE_DRIVER === 'node') {
@@ -33,7 +33,7 @@ If you don't have it, please run \`openssl rand -base64 32\` to create one.
       connectionString,
       ssl: {
         ca: serverDBEnv.PG_SSL_CA,
-        rejectUnauthorized: true,
+        rejectUnauthorized: false,
       },
     });
     return nodeDrizzle(client, { schema });

@@ -128,7 +128,7 @@ jobs:
           # 设置更新通道，PR构建为nightly，否则为stable
           UPDATE_CHANNEL: 'nightly'
           APP_URL: http://localhost:3015
-          DATABASE_URL: 'postgresql://postgres@localhost:5432/postgres'
+          OLD_DB_URL: 'postgresql://postgres@localhost:5432/postgres'
           # 默认添加一个加密 SECRET
           KEY_VAULTS_SECRET: 'oLXWIiR/AKF+rWaqy9lHkrYgzpATbW3CtJp3UfkVgpE='
           # macOS 签名和公证配置
@@ -151,7 +151,7 @@ jobs:
           # 设置更新通道，PR构建为nightly，否则为stable
           UPDATE_CHANNEL: 'nightly'
           APP_URL: http://localhost:3015
-          DATABASE_URL: 'postgresql://postgres@localhost:5432/postgres'
+          OLD_DB_URL: 'postgresql://postgres@localhost:5432/postgres'
           KEY_VAULTS_SECRET: 'oLXWIiR/AKF+rWaqy9lHkrYgzpATbW3CtJp3UfkVgpE='
           NEXT_PUBLIC_DESKTOP_PROJECT_ID: ${{ secrets.UMAMI_NIGHTLY_DESKTOP_PROJECT_ID }}
           NEXT_PUBLIC_DESKTOP_UMAMI_BASE_URL: ${{ secrets.UMAMI_NIGHTLY_DESKTOP_BASE_URL }}
@@ -167,7 +167,7 @@ jobs:
           # 设置更新通道，PR构建为nightly，否则为stable
           UPDATE_CHANNEL: 'nightly'
           APP_URL: http://localhost:3015
-          DATABASE_URL: 'postgresql://postgres@localhost:5432/postgres'
+          OLD_DB_URL: 'postgresql://postgres@localhost:5432/postgres'
           KEY_VAULTS_SECRET: 'oLXWIiR/AKF+rWaqy9lHkrYgzpATbW3CtJp3UfkVgpE='
           NEXT_PUBLIC_DESKTOP_PROJECT_ID: ${{ secrets.UMAMI_NIGHTLY_DESKTOP_PROJECT_ID }}
           NEXT_PUBLIC_DESKTOP_UMAMI_BASE_URL: ${{ secrets.UMAMI_NIGHTLY_DESKTOP_BASE_URL }}

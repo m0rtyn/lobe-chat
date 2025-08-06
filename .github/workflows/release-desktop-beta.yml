@@ -113,9 +113,9 @@ jobs:
         run: npm run desktop:build
         env:
           APP_URL: http://localhost:3015
-          DATABASE_URL: 'postgresql://postgres@localhost:5432/postgres'
+          OLD_DB_URL: "postgresql://postgres@localhost:5432/postgres"
           # 默认添加一个加密 SECRET
-          KEY_VAULTS_SECRET: 'oLXWIiR/AKF+rWaqy9lHkrYgzpATbW3CtJp3UfkVgpE='
+          KEY_VAULTS_SECRET: "oLXWIiR/AKF+rWaqy9lHkrYgzpATbW3CtJp3UfkVgpE="
           # macOS 签名和公证配置
           CSC_LINK: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
           CSC_KEY_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -134,8 +134,8 @@ jobs:
         run: npm run desktop:build
         env:
           APP_URL: http://localhost:3015
-          DATABASE_URL: 'postgresql://postgres@localhost:5432/postgres'
-          KEY_VAULTS_SECRET: 'oLXWIiR/AKF+rWaqy9lHkrYgzpATbW3CtJp3UfkVgpE='
+          OLD_DB_URL: "postgresql://postgres@localhost:5432/postgres"
+          KEY_VAULTS_SECRET: "oLXWIiR/AKF+rWaqy9lHkrYgzpATbW3CtJp3UfkVgpE="
           NEXT_PUBLIC_DESKTOP_PROJECT_ID: ${{ secrets.UMAMI_BETA_DESKTOP_PROJECT_ID }}
           NEXT_PUBLIC_DESKTOP_UMAMI_BASE_URL: ${{ secrets.UMAMI_BETA_DESKTOP_BASE_URL }}
 
@@ -149,8 +149,8 @@ jobs:
         run: npm run desktop:build
         env:
           APP_URL: http://localhost:3015
-          DATABASE_URL: 'postgresql://postgres@localhost:5432/postgres'
-          KEY_VAULTS_SECRET: 'oLXWIiR/AKF+rWaqy9lHkrYgzpATbW3CtJp3UfkVgpE='
+          OLD_DB_URL: "postgresql://postgres@localhost:5432/postgres"
+          KEY_VAULTS_SECRET: "oLXWIiR/AKF+rWaqy9lHkrYgzpATbW3CtJp3UfkVgpE="
           NEXT_PUBLIC_DESKTOP_PROJECT_ID: ${{ secrets.UMAMI_BETA_DESKTOP_PROJECT_ID }}
           NEXT_PUBLIC_DESKTOP_UMAMI_BASE_URL: ${{ secrets.UMAMI_BETA_DESKTOP_BASE_URL }}
 

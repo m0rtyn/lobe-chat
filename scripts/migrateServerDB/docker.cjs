@@ -4,11 +4,11 @@ const { drizzle } = require('drizzle-orm/node-postgres');
 const migrator = require('drizzle-orm/node-postgres/migrator');
 const { PGVECTOR_HINT } = require('./errorHint');
 
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL is not set, please set it in your environment variables.');
+if (!process.env.OLD_DB_URL) {
+  throw new Error('OLD_DB_URL is not set, please set it in your environment variables.');
 }
 
-const client = new Pool({ connectionString: process.env.DATABASE_URL });
+const client = new Pool({ connectionString: process.env.OLD_DB_URL });
 
 const db = drizzle(client);
 
@@ -27,7 +27,7 @@ const runMigrations = async () => {
 // eslint-disable-next-line unicorn/prefer-top-level-await
 runMigrations().catch((err) => {
   console.error(
-    '❌ Database migrate failed. Please check your database is valid and DATABASE_URL is set correctly. The error detail is below:',
+    '❌ Database migrate failed. Please check your database is valid and OLD_DB_URL is set correctly. The error detail is below:',
   );
   console.error(err);
 
