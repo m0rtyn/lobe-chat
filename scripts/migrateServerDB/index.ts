@@ -28,7 +28,7 @@ const runMigrations = async () => {
   process.exit(0);
 };
 
-let connectionString = process.env.OLD_DB_URL;
+let connectionString = process.env.DATABASE_URL;
 
 // only migrate database if the connection string is available
 if (!isDesktop && connectionString) {

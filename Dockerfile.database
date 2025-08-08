@@ -55,7 +55,7 @@ ENV NEXT_PUBLIC_SERVICE_MODE="${NEXT_PUBLIC_SERVICE_MODE:-server}" \
     NEXT_PUBLIC_ENABLE_NEXT_AUTH="${NEXT_PUBLIC_ENABLE_NEXT_AUTH:-1}" \
     APP_URL="http://app.com" \
     DATABASE_DRIVER="node" \
-    OLD_DB_URL="postgres://postgres:password@localhost:5432/postgres" \
+    DATABASE_URL="postgres://postgres:password@localhost:5432/postgres" \
     KEY_VAULTS_SECRET="use-for-build"
 
 # Sentry
@@ -171,7 +171,7 @@ ENV ACCESS_CODE="" \
 # Database
 ENV KEY_VAULTS_SECRET="" \
     DATABASE_DRIVER="node" \
-    OLD_DB_URL=""
+    DATABASE_URL=""
 
 # Next Auth
 ENV NEXT_AUTH_SECRET="" \
